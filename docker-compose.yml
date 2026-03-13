@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: china-travel-backend
+    ports:
+      - "10000:10000"
+    environment:
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - AMAP_API_KEY=${AMAP_API_KEY}
+      - RAILWAY_12306_MCP_URL=${RAILWAY_12306_MCP_URL:-}
+      - DOUYIN_MCP_URL=${DOUYIN_MCP_URL:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Optional: Redis for session persistence
+  redis:
+    image: redis:7-alpine
+    container_name: china-travel-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis_data:
