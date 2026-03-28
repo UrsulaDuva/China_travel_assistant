@@ -49,6 +49,9 @@ src/frontend/dist/
 # Logs
 logs/
 *.log
+server.log
+test_output.txt
+test*.txt
 
 # OS files
 .DS_Store
